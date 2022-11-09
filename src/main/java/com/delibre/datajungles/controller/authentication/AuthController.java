@@ -1,9 +1,11 @@
 package com.delibre.datajungles.controller.authentication;
 
+import com.delibre.datajungles.model.Folder;
 import com.delibre.datajungles.model.user.Role;
 import com.delibre.datajungles.model.user.User;
 import com.delibre.datajungles.model.user.UserDetailsImpl;
 import com.delibre.datajungles.model.user.UserRole;
+import com.delibre.datajungles.repository.FolderRepository;
 import com.delibre.datajungles.repository.RoleRepository;
 import com.delibre.datajungles.repository.UserRepository;
 import com.delibre.datajungles.security.jwt.JwtUtils;
@@ -12,6 +14,8 @@ import com.delibre.datajungles.security.payload.request.SignupRequest;
 import com.delibre.datajungles.security.payload.response.JwtResponse;
 import com.delibre.datajungles.security.payload.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,6 +39,9 @@ import java.util.stream.Collectors;
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    FolderRepository folderRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -91,7 +99,7 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("Error: Username is already taken!", HttpStatus.BAD_REQUEST.value()));
         }
 
 
@@ -123,6 +131,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!", HttpStatus.OK.value()));
     }
 }

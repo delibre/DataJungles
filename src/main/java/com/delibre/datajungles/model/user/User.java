@@ -2,6 +2,9 @@ package com.delibre.datajungles.model.user;
 
 //import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.delibre.datajungles.model.FileImport;
+import com.delibre.datajungles.model.FileModification;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -32,6 +35,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<FileImport> fileImports;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<FileModification> fileModifications;
 
     public User() {
     }

@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class SignupRequest {
     @NotBlank
-    @Size(min = 5, max = 32)
+    @Size(min = 4, max = 32)
     private String username;
 
     private Set<String> role;
